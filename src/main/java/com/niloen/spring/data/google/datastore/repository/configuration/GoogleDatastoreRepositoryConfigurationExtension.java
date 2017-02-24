@@ -1,8 +1,11 @@
 package com.niloen.spring.data.google.datastore.repository.configuration;
 
-import com.niloen.spring.data.google.datastore.repository.core.GoogleDatastoreKeyValueAdapter;
-import com.niloen.spring.data.google.datastore.repository.core.mapping.GoogleDatastoreMappingContext;
+import com.niloen.spring.data.google.datastore.core.GoogleDatastoreKeyValueAdapter;
+import com.niloen.spring.data.google.datastore.core.GoogleDatastoreTemplate;
+import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastoreMappingContext;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -10,9 +13,9 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.data.config.ParsingUtils;
 import org.springframework.data.keyvalue.core.KeyValueTemplate;
 import org.springframework.data.keyvalue.repository.config.KeyValueRepositoryConfigurationExtension;
-import org.springframework.data.map.MapKeyValueAdapter;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationSource;
+import org.springframework.util.StringUtils;
 
 /**
  * {@link RepositoryConfigurationExtension} for GoogleDatastore.
@@ -23,6 +26,7 @@ import org.springframework.data.repository.config.RepositoryConfigurationSource;
 public class GoogleDatastoreRepositoryConfigurationExtension extends KeyValueRepositoryConfigurationExtension {
 
 	private static final String GOOGLE_DATASTORE_ADAPTER_BEAN_NAME = "googleDatastoreKeyValueAdapter";
+
 
 	/*
 	 * (non-Javadoc)
@@ -53,10 +57,31 @@ public class GoogleDatastoreRepositoryConfigurationExtension extends KeyValueRep
 
 	@Override
 	public void registerBeansForRoot(BeanDefinitionRegistry registry, RepositoryConfigurationSource configurationSource) {
+		String googleDatastoreTemplateRef = configurationSource.getAttribute("googleDatastoreTemplateRef");
+
+		RootBeanDefinition googleDatastoreTemplateDefinition = new RootBeanDefinition(GoogleDatastoreTemplate.class);
+		registerIfNotAlreadyRegistered(googleDatastoreTemplateDefinition, registry, googleDatastoreTemplateRef, configurationSource);
+
 		RootBeanDefinition mappingContextDefinition = createGoogleDatastoreMappingContext(configurationSource);
 		mappingContextDefinition.setSource(configurationSource.getSource());
 
 		registerIfNotAlreadyRegistered(mappingContextDefinition, registry, MAPPING_CONTEXT_BEAN_NAME, configurationSource);
+
+		// register Adapter
+		RootBeanDefinition googleDatastoreKeyValueAdapterDefinition = new RootBeanDefinition(GoogleDatastoreKeyValueAdapter.class);
+
+		ConstructorArgumentValues constructorArgumentValuesForGoogleDatastoreKeyValueAdapter = new ConstructorArgumentValues();
+		constructorArgumentValuesForGoogleDatastoreKeyValueAdapter.addIndexedArgumentValue(0,
+				new RuntimeBeanReference(googleDatastoreTemplateRef));
+
+		constructorArgumentValuesForGoogleDatastoreKeyValueAdapter.addIndexedArgumentValue(1,
+				new RuntimeBeanReference(MAPPING_CONTEXT_BEAN_NAME));
+
+		googleDatastoreKeyValueAdapterDefinition.setConstructorArgumentValues(constructorArgumentValuesForGoogleDatastoreKeyValueAdapter);
+
+		registerIfNotAlreadyRegistered(googleDatastoreKeyValueAdapterDefinition, registry, GOOGLE_DATASTORE_ADAPTER_BEAN_NAME,
+				configurationSource);
+
 
 		super.registerBeansForRoot(registry, configurationSource);
 	}
@@ -73,14 +98,16 @@ public class GoogleDatastoreRepositoryConfigurationExtension extends KeyValueRep
 	protected AbstractBeanDefinition getDefaultKeyValueTemplateBeanDefinition(
 			RepositoryConfigurationSource configurationSource) {
 
-		BeanDefinitionBuilder adapterBuilder = BeanDefinitionBuilder.rootBeanDefinition(GoogleDatastoreKeyValueAdapter.class);
+		RootBeanDefinition keyValueTemplateDefinition = new RootBeanDefinition(KeyValueTemplate.class);
 
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(KeyValueTemplate.class);
-		builder
-				.addConstructorArgValue(ParsingUtils.getSourceBeanDefinition(adapterBuilder, configurationSource.getSource()));
-		builder.setRole(BeanDefinition.ROLE_SUPPORT);
+		ConstructorArgumentValues constructorArgumentValuesForKeyValueTemplate = new ConstructorArgumentValues();
+		constructorArgumentValuesForKeyValueTemplate.addIndexedArgumentValue(0,
+				new RuntimeBeanReference(GOOGLE_DATASTORE_ADAPTER_BEAN_NAME));
+		constructorArgumentValuesForKeyValueTemplate.addIndexedArgumentValue(1,
+				new RuntimeBeanReference(MAPPING_CONTEXT_BEAN_NAME));
 
-		return ParsingUtils.getSourceBeanDefinition(builder, configurationSource.getSource());
+		keyValueTemplateDefinition.setConstructorArgumentValues(constructorArgumentValuesForKeyValueTemplate);
+
+		return keyValueTemplateDefinition;
 	}
-
 }

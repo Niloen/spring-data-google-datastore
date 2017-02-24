@@ -1,6 +1,6 @@
 package com.niloen.spring.data.google.datastore.repository.core;
 
-import com.niloen.spring.data.google.datastore.repository.core.mapping.GoogleDatastorePersistentEntity;
+import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastorePersistentEntity;
 import org.springframework.data.repository.core.support.PersistentEntityInformation;
 
 import java.io.Serializable;

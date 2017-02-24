@@ -1,4 +1,4 @@
-package com.niloen.spring.data.google.datastore.repository.core.mapping;
+package com.niloen.spring.data.google.datastore.core.mapping;
 
 import org.springframework.data.keyvalue.core.mapping.BasicKeyValuePersistentEntity;
 import org.springframework.data.keyvalue.core.mapping.KeySpaceResolver;

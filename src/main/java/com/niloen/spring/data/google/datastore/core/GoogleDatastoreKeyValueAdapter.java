@@ -1,6 +1,6 @@
-package com.niloen.spring.data.google.datastore.repository.core;
+package com.niloen.spring.data.google.datastore.core;
 
-import com.niloen.spring.data.google.datastore.repository.core.mapping.GoogleDatastoreMappingContext;
+import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastoreMappingContext;
 import org.springframework.data.keyvalue.core.AbstractKeyValueAdapter;
 import org.springframework.data.util.CloseableIterator;
 
@@ -8,8 +8,12 @@ import java.io.Serializable;
 import java.util.Map.Entry;
 
 public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
-	public GoogleDatastoreKeyValueAdapter() {
+
+	private GoogleDatastoreOperations ops;
+
+	public GoogleDatastoreKeyValueAdapter(GoogleDatastoreOperations ops, GoogleDatastoreMappingContext mappingContext) {
 		super(new GoogleDatastoreQueryEngine());
+		this.ops = ops;
 	}
 
 	public Object put(Serializable id, Object item, Serializable keyspace) {

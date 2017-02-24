@@ -1,5 +1,6 @@
 package com.niloen.spring.data.google.datastore.repository.configuration;
 
+import com.niloen.spring.data.google.datastore.core.GoogleDatastoreOperations;
 import com.niloen.spring.data.google.datastore.repository.query.GoogleDatastoreQueryCreator;
 import com.niloen.spring.data.google.datastore.repository.support.GoogleDatastoreRepositoryFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -108,4 +109,12 @@ public @interface EnableGoogleDatastoreRepositories {
 	 * repositories infrastructure.
 	 */
 	boolean considerNestedRepositories() default false;
+
+	/**
+	 * Configures the bean name of the {@link GoogleDatastoreOperations} to be used. Defaulted to {@literal googleDatastoreTemplate}.
+	 *
+	 * @return
+	 */
+	String googleDatastoreTemplateRef() default "googleDatastoreTemplate";
+
 }

@@ -1,4 +1,4 @@
-package com.niloen.spring.data.google.datastore.repository.core;
+package com.niloen.spring.data.google.datastore.core;
 
 import com.niloen.spring.data.google.datastore.repository.query.GoogleDatastoreOperationChain;
 import org.springframework.data.keyvalue.core.QueryEngine;
