@@ -1,8 +1,6 @@
 package com.niloen.spring.data.google.datastore.core;
 
-import com.google.api.client.googleapis.notifications.StoredChannel;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreOptions;
+import com.google.cloud.datastore.*;
 
 /**
  * Created by marcus on 2017-02-24.
@@ -16,5 +14,17 @@ public class GoogleDatastoreTemplate implements GoogleDatastoreOperations {
 
     public GoogleDatastoreTemplate() {
         this(DatastoreOptions.getDefaultInstance().getService());
+    }
+
+    public KeyFactory newKeyFactory() {
+        return datastore.newKeyFactory();
+    }
+
+    public boolean exists(Key key) {
+        return datastore.get(key) != null;
+    }
+
+    public void put(Entity entity) {
+        datastore.put(entity);
     }
 }
