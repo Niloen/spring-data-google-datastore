@@ -1,9 +1,6 @@
 package com.niloen.spring.data.google.datastore.core;
 
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Key;
-import com.google.cloud.datastore.KeyFactory;
-import com.google.cloud.datastore.Value;
+import com.google.cloud.datastore.*;
 import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastoreMappingContext;
 import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastorePersistentEntity;
 import org.springframework.data.keyvalue.core.AbstractKeyValueAdapter;
@@ -13,7 +10,9 @@ import org.springframework.data.mapping.PropertyHandler;
 import org.springframework.data.util.CloseableIterator;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 
@@ -70,6 +69,10 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 	public Object get(Serializable id, Serializable keyspace) {
 		Entity entity = ops.get(keyFactoryForKeyspace(keyspace).newKey(asString(id)));
 
+		return entityToObject(entity, keyspace);
+	}
+
+	private Object entityToObject(Entity entity, Serializable keyspace) {
 		if (entity == null) return null;
 
 		Object obj = newObjectForKeyspace(keyspace);
@@ -126,5 +129,11 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 	}
 
 	public void destroy() throws Exception {
+	}
+
+	public Collection<Object> execute(EntityQuery query, Serializable keyspace) {
+		return ops.execute(query.toBuilder().setKind(asString(keyspace)).build()).stream()
+				.map(e -> entityToObject(e, keyspace))
+				.collect(Collectors.toList());
 	}
 }

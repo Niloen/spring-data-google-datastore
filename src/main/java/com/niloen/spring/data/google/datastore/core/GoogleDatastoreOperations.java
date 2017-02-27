@@ -2,6 +2,8 @@ package com.niloen.spring.data.google.datastore.core;
 
 import com.google.cloud.datastore.*;
 
+import java.util.Collection;
+
 /**
  * Created by marcus on 2017-02-24.
  */
@@ -17,4 +19,6 @@ public interface GoogleDatastoreOperations {
     void delete(String kind);
 
     Entity get(Key key);
+
+    Collection<Entity> execute(EntityQuery build);
 }

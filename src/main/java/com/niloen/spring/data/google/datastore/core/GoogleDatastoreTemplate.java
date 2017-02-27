@@ -3,6 +3,7 @@ package com.niloen.spring.data.google.datastore.core;
 import com.google.cloud.datastore.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -62,5 +63,13 @@ public class GoogleDatastoreTemplate implements GoogleDatastoreOperations {
     @Override
     public Entity get(Key key) {
         return datastore.get(key);
+    }
+
+    @Override
+    public Collection<Entity> execute(EntityQuery query) {
+        Collection<Entity> results = new ArrayList<>();
+        QueryResults<Entity> queryResults = datastore.run(query);
+        queryResults.forEachRemaining(results::add);
+        return results;
     }
 }
