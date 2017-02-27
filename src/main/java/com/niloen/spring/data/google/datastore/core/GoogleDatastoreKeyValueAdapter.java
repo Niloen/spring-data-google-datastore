@@ -1,9 +1,9 @@
 package com.niloen.spring.data.google.datastore.core;
 
 import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.FullEntity;
-import com.google.cloud.datastore.IncompleteKey;
 import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.Value;
 import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastoreMappingContext;
 import com.niloen.spring.data.google.datastore.core.mapping.GoogleDatastorePersistentEntity;
 import org.springframework.data.keyvalue.core.AbstractKeyValueAdapter;
@@ -32,7 +32,7 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 
 
 	public Object put(Serializable id, Object item, Serializable keyspace) {
-		Key key = ops.newKeyFactory().setKind(asString(keyspace)).newKey(asString(id));
+		Key key = keyFactoryForKeyspace(keyspace).newKey(asString(id));
 		Entity.Builder builder = Entity.newBuilder(key);
 
 		final GoogleDatastorePersistentEntity<?> persistentEntity = mappingContext.getPersistentEntity(item.getClass());
@@ -40,9 +40,13 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 		final PersistentPropertyAccessor propertyAccessor = persistentEntity.getPropertyAccessor(item);
 
 		persistentEntity.doWithProperties((PropertyHandler<KeyValuePersistentProperty>) persistentProperty -> {
-			Object value = propertyAccessor.getProperty(persistentProperty);
-			String name = persistentProperty.getName();
-			builder.set(name, value == null ? "null": value.toString());
+				Object value = propertyAccessor.getProperty(persistentProperty);
+				String name = persistentProperty.getName();
+				if (value == null) {
+					builder.setNull(name);
+				} else {
+					builder.set(name, value.toString());
+				}
 			}
 		);
 
@@ -52,11 +56,48 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 	}
 
 	public boolean contains(Serializable id, Serializable keyspace) {
-		return ops.exists(ops.newKeyFactory().setKind(asString(keyspace)).newKey(asString(id)));
+		return ops.exists(keyFactoryForKeyspace(keyspace).newKey(asString(id)));
+	}
+
+	private Class classForKeyspace(Serializable keyspace) {
+		try {
+			return getClass().getClassLoader().loadClass(asString(keyspace));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public Object get(Serializable id, Serializable keyspace) {
-		throw new RuntimeException("Not implemented yet");
+		Entity entity = ops.get(keyFactoryForKeyspace(keyspace).newKey(asString(id)));
+
+		if (entity == null) return null;
+
+		Object obj = newObjectForKeyspace(keyspace);
+
+		GoogleDatastorePersistentEntity<?> persistentEntity = mappingContext.getPersistentEntity(obj.getClass());
+
+		final PersistentPropertyAccessor propertyAccessor = persistentEntity.getPropertyAccessor(obj);
+
+		persistentEntity.doWithProperties((PropertyHandler<KeyValuePersistentProperty>) persistentProperty -> {
+			Value<?> entityValue = entity.getValue(persistentProperty.getName());
+			propertyAccessor.setProperty(persistentProperty, entityValue.get());
+		});
+
+		return obj;
+	}
+
+	private Object newObjectForKeyspace(Serializable keyspace) {
+		Class entityClass = classForKeyspace(keyspace);
+
+		try {
+			return entityClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private KeyFactory keyFactoryForKeyspace(Serializable keyspace) {
+		return ops.newKeyFactory().setKind(asString(keyspace));
 	}
 
 	public Object delete(Serializable id, Serializable keyspace) {

@@ -58,4 +58,9 @@ public class GoogleDatastoreTemplate implements GoogleDatastoreOperations {
     private EntityQuery.Builder queryByKind(String kind) {
         return Query.newEntityQueryBuilder().setKind(kind);
     }
+
+    @Override
+    public Entity get(Key key) {
+        return datastore.get(key);
+    }
 }

@@ -15,4 +15,6 @@ public interface GoogleDatastoreOperations {
     long count(String kind);
 
     void delete(String kind);
+
+    Entity get(Key key);
 }
