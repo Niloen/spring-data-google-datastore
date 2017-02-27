@@ -11,4 +11,8 @@ public interface GoogleDatastoreOperations {
     boolean exists(Key k);
 
     void put(Entity entity);
+
+    long count(String kind);
+
+    void delete(String kind);
 }

@@ -72,8 +72,7 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 	}
 
 	public void deleteAllOf(Serializable keyspace) {
-		throw new RuntimeException("Not implemented yet");
-
+	    ops.delete(asString(keyspace));
 	}
 
 	public void clear() {
@@ -82,7 +81,7 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 	}
 
 	public long count(Serializable keyspace) {
-		throw new RuntimeException("Not implemented yet");
+	    return ops.count(asString(keyspace));
 	}
 
 	public void destroy() throws Exception {

@@ -16,6 +16,7 @@
 package com.niloen.spring.data.google.datastore.repository;
 
 import com.niloen.spring.data.google.datastore.repository.configuration.EnableGoogleDatastoreRepositories;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
+import org.springframework.data.keyvalue.core.KeyValueTemplate;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,6 +49,10 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 
 	@Autowired
 	PersonRepository repo;
+
+	@Autowired
+	KeyValueTemplate kvTemplate;
+
 
 	@Configuration
 	@EnableGoogleDatastoreRepositories(considerNestedRepositories = true, includeFilters = {
@@ -67,6 +74,14 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 		String lastname;
 
 	}
+
+	@Before
+	public void setUp() {
+
+		// flush keyspaces
+		kvTemplate.delete(Person.class);
+	}
+
 	@Test
 	public void simpleFindShouldReturnEntitiesCorrectly() {
 
