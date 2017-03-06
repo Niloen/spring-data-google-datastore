@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.niloen.spring.data</groupId>
-	<artifactId>spring-data-google-datastore</artifactId>
+	<artifactId>google-datastore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>spring-data-google-datastore</name>
+	<name>Spring Data Google Datastore</name>
 	<description>Sprint Data for Google Datastore</description>
 
 	<properties>
