@@ -41,6 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 
 import static org.junit.Assert.assertThat;
 
@@ -73,6 +74,8 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 
 		String firstname;
 		String lastname;
+
+		Long salary;
 	}
 
 	@Before
@@ -93,6 +96,11 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 		egwene.firstname = "egwene";
 
 		repo.save(Arrays.asList(rand, egwene));
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		assertThat(repo.count(), is(2L));
 
@@ -104,5 +112,18 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 
 		assertThat(repo.findByFirstname("egwene").size(), is(1));
 		assertThat(repo.findByFirstname("egwene"), hasItem(egwene));
+	}
+
+	@Test
+    public void handleLongType() {
+	    Person p = new Person();
+	    p.setSalary(50L);
+	    p.setId("id");
+
+	    repo.save(p);
+
+		Person loadedPerson = repo.findOne("id");
+
+		assertEquals(Long.valueOf(50L), loadedPerson.getSalary());
 	}
 }
