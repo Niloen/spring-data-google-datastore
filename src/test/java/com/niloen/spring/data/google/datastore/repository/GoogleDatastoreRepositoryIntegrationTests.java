@@ -76,6 +76,8 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 		String lastname;
 
 		Long salary;
+
+		boolean isVip;
 	}
 
 	@Before
@@ -97,7 +99,7 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 
 		repo.save(Arrays.asList(rand, egwene));
 		try {
-			Thread.sleep(100);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -125,5 +127,18 @@ public class GoogleDatastoreRepositoryIntegrationTests {
 		Person loadedPerson = repo.findOne("id");
 
 		assertEquals(Long.valueOf(50L), loadedPerson.getSalary());
+	}
+
+	@Test
+	public void handleBooleanType() {
+		Person p = new Person();
+		p.setVip(true);
+		p.setId("id");
+
+		repo.save(p);
+
+		Person loadedPerson = repo.findOne("id");
+
+		assertEquals(true, loadedPerson.isVip());
 	}
 }

@@ -43,8 +43,10 @@ public class GoogleDatastoreKeyValueAdapter extends AbstractKeyValueAdapter {
 				String name = persistentProperty.getName();
 				if (value == null) {
 					builder.setNull(name);
-				} else if(value instanceof Number) {
-					builder.set(name, ((Number) value).longValue());
+                } else if(value instanceof Number) {
+                    builder.set(name, ((Number) value).longValue());
+                } else if(value instanceof Boolean) {
+                    builder.set(name, (Boolean) value);
 				} else  {
 					builder.set(name, value.toString());
 				}
