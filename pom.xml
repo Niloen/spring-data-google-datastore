@@ -30,8 +30,8 @@
 	</licenses>
 
 	<scm>
-		<connection>git@github.com:Niloen/spring-data-google-datastore.git</connection>
-		<developerConnection>git@github.com:Niloen/spring-data-google-datastore.git</developerConnection>
+		<connection>scm:git:git://github.com:Niloen/spring-data-google-datastore.git</connection>
+		<developerConnection>scm:git:git://github.com:Niloen/spring-data-google-datastore.git</developerConnection>
 		<url>https://github.com/Niloen/spring-data-google-datastore</url>
 	</scm>
 
