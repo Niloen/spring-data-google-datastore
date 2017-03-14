@@ -47,7 +47,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class GoogleDatastoreRepositoryIntegrationTests {
+public class GoogleDatastoreRepositoryIntegrationTest {
 
 	@Autowired
 	PersonRepository repo;
