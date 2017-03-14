@@ -29,8 +29,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com:Niloen/spring-data-google-datastore.git</connection>
-		<developerConnection>scm:git:git://github.com:Niloen/spring-data-google-datastore.git</developerConnection>
+		<connection>scm:git:git@github.com:Niloen/spring-data-google-datastore.git</connection>
+		<developerConnection>scm:git:git@github.com:Niloen/spring-data-google-datastore.git</developerConnection>
 		<url>https://github.com/Niloen/spring-data-google-datastore</url>
 	  <tag>google-datastore-0.0.1</tag>
   </scm>
