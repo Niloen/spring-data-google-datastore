@@ -4,7 +4,7 @@
 
 	<groupId>com.niloen.spring.data</groupId>
 	<artifactId>google-datastore</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>Spring Data Google Datastore</name>
